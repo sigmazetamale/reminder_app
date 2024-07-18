@@ -1,6 +1,14 @@
 package com.pet.reminder_app.dto;
 
-public record UserReadDTO (Long id,
-                           String firstName,
-                           String lastName){
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class UserReadDTO{
+
+    private Long id;
+
+    private String email;
+
 }

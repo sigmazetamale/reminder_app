@@ -1,4 +1,4 @@
-package com.pet.reminder_app.config;
+/*package com.pet.reminder_app.config;
 
 import com.pet.reminder_app.database.model.User;
 import com.pet.reminder_app.service.UserService;
@@ -29,3 +29,5 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
         response.sendRedirect("/api/v1/list");
     }
 }
+
+ */

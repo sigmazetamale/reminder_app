@@ -1,14 +1,22 @@
 package com.pet.reminder_app.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-public record ReminderReadDTO (Long id,
-                               String title,
-                               String description,
-                               LocalDateTime remind,
-                               UserReadDTO user) {
+@Data
+@AllArgsConstructor
+public class ReminderReadDTO{
+
+    private Long id;
+
+    private String title;
+
+    private String description;
+
+    private LocalDateTime remind;
+
+    private UserReadDTO user;
+
 }
