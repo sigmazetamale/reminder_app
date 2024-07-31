@@ -6,12 +6,12 @@ import com.pet.reminder_app.database.repository.ReminderRepository;
 import com.pet.reminder_app.database.repository.UserRepository;
 import com.pet.reminder_app.dto.*;
 import com.pet.reminder_app.mapper.ReminderMapper;
-import com.pet.reminder_app.util.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,22 +26,27 @@ import java.util.stream.Collectors;
 public class ReminderService {
 
     private final ReminderRepository reminderRepository;
-    private final UserRepository userRepository;
 
     private final ReminderMapper reminderMapper;
     private final UserService userService;
 
 
-    public RemindersRs findAllReminders(Long userId, int pageNumber, int pageSize) {
-        User user = userService.findById(userId);
+    public RemindersRs findAllReminders(OAuth2User authentication, int pageNumber, int pageSize) {
+        User user = userService.findByEmail(authentication.getAttribute("email"));
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Reminder> page = reminderRepository.findAllByUser(user, pageable);
         return reminderMapper.pageToResponse(page, page.isLast());
 
     }
 
-    public List<ReminderReadDTO> findAllSortedReminders(SortedRemindersRq sortedRemindersRq) {
-        User user = userService.findById(sortedRemindersRq.getUserId());
+    public List<ReminderReadDTO> findAllReminders(OAuth2User authentication, ReminderFilter reminderFilter) {
+        User user = userService.findByEmail(authentication.getAttribute("email"));
+        return reminderRepository.findAllByFilter(user.getId(),reminderFilter).stream().map(reminderMapper::mapFromReminderToReminderReadDTO).toList();
+
+    }
+
+    public List<ReminderReadDTO> findAllSortedReminders(OAuth2User authentication, SortedRemindersRq sortedRemindersRq) {
+        User user = userService.findByEmail(authentication.getAttribute("email"));
 
         List<Reminder> reminderList;
 
@@ -62,24 +67,20 @@ public class ReminderService {
 
     }
 
-    public List<ReminderReadDTO> findAllReminders(ReminderFilter reminderFilter) {
-        userService.findById(reminderFilter.getUserId());
-        return reminderRepository.findAllByFilter(reminderFilter).stream().map(reminderMapper::mapFromReminderToReminderReadDTO).toList();
-
-    }
-
 
     @Transactional
-    public ReminderReadDTO create(ReminderCreateEditDTO reminderCreateEditDTO) {
+    public ReminderReadDTO create(OAuth2User authentication, ReminderCreateEditDTO reminderCreateEditDTO) {
         Reminder reminder = reminderMapper.mapFromReminderCreateEditDTOToReminder(reminderCreateEditDTO);
-        reminder.setUser(userRepository.findById(reminderCreateEditDTO.getUserId()).orElseThrow(UserNotFoundException::new));
+        User user = userService.findByEmail(authentication.getAttribute("email"));
+        reminder.setUser(user);
         reminderRepository.save(reminder);
         return reminderMapper.mapFromReminderToReminderReadDTO(reminder);
     }
 
     @Transactional
-    public boolean delete(Long reminderId) {
-        return reminderRepository.findById(reminderId)
+    public boolean delete(OAuth2User authentication, Long reminderId) {
+        User user = userService.findByEmail(authentication.getAttribute("email"));
+        return reminderRepository.findByIdAndUser(reminderId, user)
                 .map(entity -> {
                     reminderRepository.delete(entity);
                     reminderRepository.flush();
@@ -89,11 +90,11 @@ public class ReminderService {
     }
 
     @Transactional
-    public Optional<ReminderReadDTO> update(Long id, ReminderCreateEditDTO reminderCreateEditDTO) {
-        return reminderRepository.findById(id).
+    public Optional<ReminderReadDTO> update(OAuth2User authentication, Long id, ReminderCreateEditDTO reminderCreateEditDTO) {
+        User user = userService.findByEmail(authentication.getAttribute("email"));
+        return reminderRepository.findByIdAndUser(id, user).
                 map(entity -> {
                     Reminder reminder = reminderMapper.mapFromReminderCreateEditDTOToReminder(reminderCreateEditDTO, entity);
-                    reminder.setUser(userRepository.findById(reminderCreateEditDTO.getUserId()).orElseThrow(UserNotFoundException::new));
                     return reminder;
                 })
                 .map(reminderRepository::saveAndFlush)

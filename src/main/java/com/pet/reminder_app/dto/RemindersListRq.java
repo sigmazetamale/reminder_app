@@ -8,8 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class RemindersListRq {
 
-    private Long userId;
-
     @Min(value = 1, message = "Parameter 'pageNumber' must be greater than zero")
     private int pageNumber;
 

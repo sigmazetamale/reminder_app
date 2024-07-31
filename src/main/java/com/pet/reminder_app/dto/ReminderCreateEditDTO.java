@@ -20,6 +20,4 @@ public class ReminderCreateEditDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime remind;
 
-    private Long userId;
-
 }

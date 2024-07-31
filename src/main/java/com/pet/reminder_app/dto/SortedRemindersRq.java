@@ -14,7 +14,4 @@ public class SortedRemindersRq {
 
     private boolean sortedByTime;
 
-    private Long userId;
-
-
 }

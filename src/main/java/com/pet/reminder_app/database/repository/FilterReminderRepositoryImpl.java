@@ -18,17 +18,15 @@ public class FilterReminderRepositoryImpl implements FilterReminderRepository {
     private final EntityManager entityManager;
 
     @Override
-    public List<Reminder> findAllByFilter(ReminderFilter filter) {
+    public List<Reminder> findAllByFilter(Long id, ReminderFilter filter) {
 
         var cb = entityManager.getCriteriaBuilder();
         var criteria = cb.createQuery(Reminder.class);
-
         var reminder = criteria.from(Reminder.class);
         criteria.select(reminder);
 
         List<Predicate> predicates = new ArrayList<>();
-
-        predicates.add(cb.equal(reminder.get("user").get("id"), filter.getUserId()));
+        predicates.add(cb.equal(reminder.get("user").get("id"), id));
 
         if (filter.getTitle() != null && !filter.getTitle().isBlank()){
             predicates.add(cb.equal(reminder.get("title"), filter.getTitle()));
@@ -36,17 +34,18 @@ public class FilterReminderRepositoryImpl implements FilterReminderRepository {
         if (filter.getDescription() != null && !filter.getDescription().isBlank()){
             predicates.add(cb.like(reminder.get("description"), "%" + filter.getDescription() + "%"));
         }
+
+
         if (filter.getDate() != null && filter.getTime() != null){
             LocalDateTime localDateTime = filter.getDate().atTime(filter.getTime());
             predicates.add(cb.lessThanOrEqualTo(reminder.get("remind"), localDateTime));
         }else if (filter.getDate() != null){
             predicates.add(cb.lessThanOrEqualTo(reminder.get("remind"), filter.getDate()));
         }else if (filter.getTime() != null){
-            predicates.add(cb.lessThanOrEqualTo(reminder.get("remind"), filter.getTime()));
+            predicates.add(cb.lessThanOrEqualTo(reminder.get("remind"), LocalDateTime.now().toLocalDate().atTime(filter.getTime())));
         }
 
         criteria.where(predicates.toArray(new Predicate[predicates.size()]));
-
         return entityManager.createQuery(criteria).getResultList();
     }
 }

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface FilterReminderRepository {
 
-    List<Reminder> findAllByFilter(ReminderFilter filter);
+    List<Reminder> findAllByFilter(Long id, ReminderFilter filter);
 }

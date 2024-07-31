@@ -21,6 +21,4 @@ public class ReminderFilter{
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime time;
 
-    private Long userId;
-
 }

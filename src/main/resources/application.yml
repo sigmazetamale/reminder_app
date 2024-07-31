@@ -12,11 +12,19 @@ spring:
     open-in-view: false
 
 
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google:
-#            client-id:
-#            client-secret: ${GOOGLE_CLIENT_SECRET:}
-#            redirect-uri:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope:
+              - email
+              - profile
+#          github:
+#            client-id: ''
+#            client-secret: ''
+#            scope:
+#              - user:email
+#              - read:user
