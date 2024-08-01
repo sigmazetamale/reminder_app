@@ -3,7 +3,6 @@ package com.pet.reminder_app.service;
 import com.pet.reminder_app.database.model.Reminder;
 import com.pet.reminder_app.database.model.User;
 import com.pet.reminder_app.database.repository.ReminderRepository;
-import com.pet.reminder_app.database.repository.UserRepository;
 import com.pet.reminder_app.dto.*;
 import com.pet.reminder_app.mapper.ReminderMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +32,27 @@ public class ReminderService {
 
     private final ReminderMapper reminderMapper;
     private final UserService userService;
+    private final TelegramBotService telegramBotService;
+
+    @Scheduled(cron = "@daily")
+    public void sendReminders() {
+        List<Reminder> reminders = reminderRepository.findByReminderTimeBefore(LocalDateTime.now());
+        for (Reminder reminder : reminders) {
+//            sendEmail(reminder);
+            sendTelegramMessage(reminder);
+        }
+    }
+
+    private void sendTelegramMessage(Reminder reminder) {
+        SendMessage message = new SendMessage();
+//        message.setChatId(reminder.getUser().getTelegramId());
+        message.setText("Reminder: " + reminder.getTitle() + "\n" + reminder.getDescription());
+        try {
+            telegramBotService.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public RemindersRs findAllReminders(OAuth2User authentication, int pageNumber, int pageSize) {
@@ -41,7 +65,7 @@ public class ReminderService {
 
     public List<ReminderReadDTO> findAllReminders(OAuth2User authentication, ReminderFilter reminderFilter) {
         User user = userService.findByEmail(authentication.getAttribute("email"));
-        return reminderRepository.findAllByFilter(user.getId(),reminderFilter).stream().map(reminderMapper::mapFromReminderToReminderReadDTO).toList();
+        return reminderRepository.findAllByFilter(user.getId(), reminderFilter).stream().map(reminderMapper::mapFromReminderToReminderReadDTO).toList();
 
     }
 

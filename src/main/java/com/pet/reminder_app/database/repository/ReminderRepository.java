@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,5 +23,7 @@ public interface ReminderRepository extends JpaRepository<Reminder,Long>, Filter
     List<Reminder> findAllByUser(User user, Sort sort);
 
     Optional<Reminder> findByIdAndUser(Long id, User user);
+
+    List<Reminder> findByReminderTimeBefore(LocalDateTime time);
 
 }
