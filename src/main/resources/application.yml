@@ -31,5 +31,6 @@ spring:
 
 telegram:
   bot:
-    username: your_bot_username
-    token: your_bot_token
+    username:
+    token:
+    channelChatId:

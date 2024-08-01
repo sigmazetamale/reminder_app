@@ -1,20 +1,23 @@
 package com.pet.reminder_app.service;
 
 import com.pet.reminder_app.config.TelegramBotConfig;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TelegramBotService extends TelegramLongPollingBot {
 
     private final TelegramBotConfig telegramBotConfig;
 
     @Override
     public void onUpdateReceived(Update update) {
-
+        if (update.hasMessage() && update.getMessage().getChat().isSuperGroupChat()) {
+            long chatId = update.getMessage().getChatId();
+            System.out.println("Channel Chat ID: " + chatId);
+        }
     }
 
     @Override
@@ -25,6 +28,10 @@ public class TelegramBotService extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return telegramBotConfig.getBotToken();
+    }
+
+    public String getChannelChatId() {
+        return telegramBotConfig.getChannelChatId();
     }
 
 }

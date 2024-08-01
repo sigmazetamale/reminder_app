@@ -24,6 +24,6 @@ public interface ReminderRepository extends JpaRepository<Reminder,Long>, Filter
 
     Optional<Reminder> findByIdAndUser(Long id, User user);
 
-    List<Reminder> findByReminderTimeBefore(LocalDateTime time);
+    List<Reminder> findAllByRemindAfter(LocalDateTime time);
 
 }

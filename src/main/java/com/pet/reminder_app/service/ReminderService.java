@@ -36,7 +36,7 @@ public class ReminderService {
 
     @Scheduled(cron = "@daily")
     public void sendReminders() {
-        List<Reminder> reminders = reminderRepository.findByReminderTimeBefore(LocalDateTime.now());
+        List<Reminder> reminders = reminderRepository.findAllByRemindAfter(LocalDateTime.now());
         for (Reminder reminder : reminders) {
 //            sendEmail(reminder);
             sendTelegramMessage(reminder);
@@ -45,8 +45,8 @@ public class ReminderService {
 
     private void sendTelegramMessage(Reminder reminder) {
         SendMessage message = new SendMessage();
-//        message.setChatId(reminder.getUser().getTelegramId());
-        message.setText("Reminder: " + reminder.getTitle() + "\n" + reminder.getDescription());
+        message.setChatId(telegramBotService.getChannelChatId());
+        message.setText("Reminder: " + reminder.getTitle() + "\n" + reminder.getDescription() + "\n" + "for user: " + reminder.getUser().getEmail());
         try {
             telegramBotService.execute(message);
         } catch (TelegramApiException e) {
@@ -57,7 +57,7 @@ public class ReminderService {
 
     public RemindersRs findAllReminders(OAuth2User authentication, int pageNumber, int pageSize) {
         User user = userService.findByEmail(authentication.getAttribute("email"));
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
         Page<Reminder> page = reminderRepository.findAllByUser(user, pageable);
         return reminderMapper.pageToResponse(page, page.isLast());
 
