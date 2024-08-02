@@ -14,10 +14,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().getChat().isSuperGroupChat()) {
-            long chatId = update.getMessage().getChatId();
-            System.out.println("Channel Chat ID: " + chatId);
-        }
+
     }
 
     @Override

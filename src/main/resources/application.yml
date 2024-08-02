@@ -1,15 +1,14 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:}
-    username: ${JDBC_DATABASE_USERNAME:}
-    password: ${JDBC_DATABASE_PASSWORD:}
+    url:
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
   jpa:
     properties.hibernate:
       show_sql: true
       format_sql: true
       hbm2ddl.auto: validate
-    open-in-view: false
 
 
   security:
@@ -34,3 +33,14 @@ telegram:
     username:
     token:
     channelChatId:
+
+  mail:
+    host:
+    port:
+    username:
+    password:
+    properties:
+      mail:
+        smtp.auth: true
+        starttls.enable: true
+

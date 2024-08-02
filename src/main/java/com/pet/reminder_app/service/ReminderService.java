@@ -32,15 +32,24 @@ public class ReminderService {
 
     private final ReminderMapper reminderMapper;
     private final UserService userService;
+    private final EmailService emailService;
     private final TelegramBotService telegramBotService;
 
-    @Scheduled(cron = "@daily")
+    @Scheduled(fixedDelay = 2000)
     public void sendReminders() {
         List<Reminder> reminders = reminderRepository.findAllByRemindAfter(LocalDateTime.now());
         for (Reminder reminder : reminders) {
-//            sendEmail(reminder);
+            sendEmail(reminder);
             sendTelegramMessage(reminder);
         }
+    }
+
+    private void sendEmail(Reminder reminder) {
+        String toAddress = reminder.getUser().getEmail();
+        String text = "Напоминание " + reminder.getTitle()  + "/n"
+                + "Описание: " + reminder.getDescription()
+                + " Время напоминания: " + reminder.getRemind();
+        emailService.sendSimpleMessage(toAddress, text);
     }
 
     private void sendTelegramMessage(Reminder reminder) {
