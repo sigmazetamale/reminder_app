@@ -28,6 +28,8 @@ public class User {
 
     private String email;
 
+    private Long chatId;
+
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reminder> reminders = new ArrayList<>();

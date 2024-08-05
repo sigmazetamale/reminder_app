@@ -28,4 +28,11 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
+
+    @Transactional
+    public void findByEmailAndUpdate(String email, Long chatId) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        user.setChatId(chatId);
+        userRepository.save(user);
+    }
 }

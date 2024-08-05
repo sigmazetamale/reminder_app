@@ -35,12 +35,15 @@ public class ReminderService {
     private final EmailService emailService;
     private final TelegramBotService telegramBotService;
 
-    @Scheduled(fixedDelay = 2000)
-    public void sendReminders() {
+    @Scheduled(fixedDelay = 1000)
+    public void sendReminders() throws InterruptedException {
         List<Reminder> reminders = reminderRepository.findAllByRemindAfter(LocalDateTime.now());
         for (Reminder reminder : reminders) {
-            sendEmail(reminder);
-            sendTelegramMessage(reminder);
+//            sendEmail(reminder);
+            if (reminder.getUser().getChatId() != null){
+                sendTelegramMessage(reminder);
+                Thread.sleep(2000);
+            }
         }
     }
 
@@ -54,8 +57,8 @@ public class ReminderService {
 
     private void sendTelegramMessage(Reminder reminder) {
         SendMessage message = new SendMessage();
-        message.setChatId(telegramBotService.getChannelChatId());
-        message.setText("Reminder: " + reminder.getTitle() + "\n" + reminder.getDescription() + "\n" + "for user: " + reminder.getUser().getEmail());
+        message.setChatId(reminder.getUser().getChatId());
+        message.setText("Reminder: " + reminder.getTitle() + "\n" + "Описание: " + reminder.getDescription() + "\n" + "for user: " + reminder.getUser().getEmail());
         try {
             telegramBotService.execute(message);
         } catch (TelegramApiException e) {

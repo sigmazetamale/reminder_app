@@ -15,7 +15,4 @@ public class TelegramBotConfig {
     @Value("${telegram.bot.token}")
     private String botToken;
 
-    @Value("${telegram.bot.channelChatId}")
-    private String channelChatId;
-
 }

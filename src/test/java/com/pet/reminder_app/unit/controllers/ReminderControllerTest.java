@@ -1,4 +1,4 @@
-package com.pet.reminder_app.controllers;
+package com.pet.reminder_app.unit.controllers;
 
 
 import com.pet.reminder_app.dto.*;
@@ -32,9 +32,6 @@ public class ReminderControllerTest {
 
     @Mock
     private ReminderService reminderService;
-
-    @Mock
-    private UserService userService;
 
     @InjectMocks
     private ReminderController reminderController;
