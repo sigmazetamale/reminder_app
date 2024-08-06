@@ -35,11 +35,11 @@ public class ReminderService {
     private final EmailService emailService;
     private final TelegramBotService telegramBotService;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 10000)
     public void sendReminders() throws InterruptedException {
         List<Reminder> reminders = reminderRepository.findAllByRemindAfter(LocalDateTime.now());
         for (Reminder reminder : reminders) {
-//            sendEmail(reminder);
+            sendEmail(reminder);
             if (reminder.getUser().getChatId() != null){
                 sendTelegramMessage(reminder);
                 Thread.sleep(2000);
@@ -49,7 +49,7 @@ public class ReminderService {
 
     private void sendEmail(Reminder reminder) {
         String toAddress = reminder.getUser().getEmail();
-        String text = "Напоминание " + reminder.getTitle()  + "/n"
+        String text = "Напоминание " + reminder.getTitle()  + "\n"
                 + "Описание: " + reminder.getDescription()
                 + " Время напоминания: " + reminder.getRemind();
         emailService.sendSimpleMessage(toAddress, text);
