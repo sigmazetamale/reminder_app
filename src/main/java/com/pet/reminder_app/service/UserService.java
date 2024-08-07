@@ -3,10 +3,11 @@ package com.pet.reminder_app.service;
 import com.pet.reminder_app.database.model.User;
 import com.pet.reminder_app.database.repository.UserRepository;
 import com.pet.reminder_app.util.exceptions.UserNotFoundException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -39,7 +39,6 @@ public class ReminderController {
         return new ResponseEntity<>(reminderService.findAllReminders(authentication, reminderFilter), HttpStatus.OK);
     }
 
-
     @PostMapping(value = "/reminder/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReminderReadDTO> create(@RequestBody @Validated ReminderCreateEditDTO reminderCreateEditDTO, @AuthenticationPrincipal OAuth2User authentication) {
         return new ResponseEntity<>(reminderService.create(authentication, reminderCreateEditDTO), HttpStatus.CREATED);
@@ -58,6 +57,5 @@ public class ReminderController {
         return new ResponseEntity<>(reminderService.update(authentication, id, reminderCreateEditDTO)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)), HttpStatus.OK);
     }
-
 
 }

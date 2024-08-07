@@ -35,22 +35,21 @@ public class ReminderService {
     private final EmailService emailService;
     private final TelegramBotService telegramBotService;
 
-    @Scheduled(fixedDelay = 10000)
-    public void sendReminders() throws InterruptedException {
+    @Scheduled(cron = "0 0 8 * * *")
+    public void sendReminders() {
         List<Reminder> reminders = reminderRepository.findAllByRemindAfter(LocalDateTime.now());
         for (Reminder reminder : reminders) {
             sendEmail(reminder);
             if (reminder.getUser().getChatId() != null){
                 sendTelegramMessage(reminder);
-                Thread.sleep(2000);
             }
         }
     }
 
     private void sendEmail(Reminder reminder) {
         String toAddress = reminder.getUser().getEmail();
-        String text = "Напоминание " + reminder.getTitle()  + "\n"
-                + "Описание: " + reminder.getDescription()
+        String text = "Напоминание: " + reminder.getTitle()  + "\n"
+                + "Описание: " + reminder.getDescription() + "\n"
                 + " Время напоминания: " + reminder.getRemind();
         emailService.sendSimpleMessage(toAddress, text);
     }
@@ -58,14 +57,13 @@ public class ReminderService {
     private void sendTelegramMessage(Reminder reminder) {
         SendMessage message = new SendMessage();
         message.setChatId(reminder.getUser().getChatId());
-        message.setText("Reminder: " + reminder.getTitle() + "\n" + "Описание: " + reminder.getDescription() + "\n" + "for user: " + reminder.getUser().getEmail());
+        message.setText("Напоминание: " + reminder.getTitle() + "\n" + "Описание: " + reminder.getDescription());
         try {
             telegramBotService.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
-
 
     public RemindersRs findAllReminders(OAuth2User authentication, int pageNumber, int pageSize) {
         User user = userService.findByEmail(authentication.getAttribute("email"));
@@ -100,9 +98,7 @@ public class ReminderService {
         }
 
         return reminderList.stream().map(reminderMapper::mapFromReminderToReminderReadDTO).collect(Collectors.toList());
-
     }
-
 
     @Transactional
     public ReminderReadDTO create(OAuth2User authentication, ReminderCreateEditDTO reminderCreateEditDTO) {
@@ -129,10 +125,7 @@ public class ReminderService {
     public Optional<ReminderReadDTO> update(OAuth2User authentication, Long id, ReminderCreateEditDTO reminderCreateEditDTO) {
         User user = userService.findByEmail(authentication.getAttribute("email"));
         return reminderRepository.findByIdAndUser(id, user).
-                map(entity -> {
-                    Reminder reminder = reminderMapper.mapFromReminderCreateEditDTOToReminder(reminderCreateEditDTO, entity);
-                    return reminder;
-                })
+                map(entity -> reminderMapper.mapFromReminderCreateEditDTOToReminder(reminderCreateEditDTO, entity))
                 .map(reminderRepository::saveAndFlush)
                 .map(reminderMapper::mapFromReminderToReminderReadDTO);
     }

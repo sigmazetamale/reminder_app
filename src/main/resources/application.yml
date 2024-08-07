@@ -10,7 +10,6 @@ spring:
       format_sql: true
       hbm2ddl.auto: validate
 
-
   security:
     oauth2:
       client:
@@ -18,15 +17,20 @@ spring:
           google:
             client-id:
             client-secret:
-            scope:
-              - email
-              - profile
-#          github:
-#            client-id: ''
-#            client-secret: ''
-#            scope:
-#              - user:email
-#              - read:user
+
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
 
 telegram:
   bot:
@@ -34,13 +38,5 @@ telegram:
     token:
     channelChatId:
 
-  mail:
-    host:
-    port:
-    username:
-    password:
-    properties:
-      mail:
-        smtp.auth: true
-        starttls.enable: true
+
 

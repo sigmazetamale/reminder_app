@@ -15,9 +15,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReminderMapper {
 
-
-    Reminder mapFromReminderReadDTOToReminder(ReminderReadDTO reminderReadDTO);
-
     ReminderReadDTO mapFromReminderToReminderReadDTO(Reminder reminder);
 
     Reminder mapFromReminderCreateEditDTOToReminder(ReminderCreateEditDTO reminderCreateEditDTO, @MappingTarget Reminder reminder);

@@ -36,7 +36,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
     private void sendFailedResponseMessage(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("Неправильно введён email");
+        message.setText("Недопустимый ввод");
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -64,5 +64,4 @@ public class TelegramBotService extends TelegramLongPollingBot {
     public String getBotToken() {
         return telegramBotConfig.getBotToken();
     }
-
 }

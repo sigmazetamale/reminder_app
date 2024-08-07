@@ -4,7 +4,6 @@ package com.pet.reminder_app.unit.controllers;
 import com.pet.reminder_app.dto.*;
 import com.pet.reminder_app.http.controller.ReminderController;
 import com.pet.reminder_app.service.ReminderService;
-import com.pet.reminder_app.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,7 +63,7 @@ public class ReminderControllerTest {
                         new UserReadDTO(1L, "test email 1"))
         );
 
-        when(reminderService.findAllReminders(principal, 1, 1)).thenReturn(new RemindersRs(expectedRemindersPage1,false));
+        when(reminderService.findAllReminders(principal, 1, 1)).thenReturn(new RemindersRs(expectedRemindersPage1, false));
 
         ResponseEntity<RemindersRs> response1 = reminderController.findAllReminders(new RemindersListRq(1, 1), principal);
 
@@ -80,7 +79,7 @@ public class ReminderControllerTest {
                         new UserReadDTO(2L, "test email 2"))
         );
 
-        when(reminderService.findAllReminders(principal, 1, 2)).thenReturn(new RemindersRs(expectedRemindersPage2,true));
+        when(reminderService.findAllReminders(principal, 1, 2)).thenReturn(new RemindersRs(expectedRemindersPage2, true));
 
         ResponseEntity<RemindersRs> response2 = reminderController.findAllReminders(new RemindersListRq(1, 2), principal);
 
@@ -133,7 +132,7 @@ public class ReminderControllerTest {
         when(reminderService.update(principal, 1L, reminderCreateEditDTO)).thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            reminderController.update( 1L, reminderCreateEditDTO, principal);
+            reminderController.update(1L, reminderCreateEditDTO, principal);
         });
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
@@ -175,7 +174,7 @@ public class ReminderControllerTest {
         List<ReminderReadDTO> sortedByNameReminder = List.of(new ReminderReadDTO(1L, "test title 1", "test description 1", LocalDateTime.now(),
                 new UserReadDTO(1L, "test email 1")));
 
-        SortedRemindersRq sortedRemindersRq = new SortedRemindersRq(true, false,false);
+        SortedRemindersRq sortedRemindersRq = new SortedRemindersRq(true, false, false);
 
         when(reminderService.findAllSortedReminders(principal, sortedRemindersRq))
                 .thenReturn(sortedByNameReminder);
@@ -206,5 +205,4 @@ public class ReminderControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(filteredByTitleReminders, response.getBody());
     }
-
 }

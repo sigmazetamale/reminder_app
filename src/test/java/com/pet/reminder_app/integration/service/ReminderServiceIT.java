@@ -45,21 +45,21 @@ public class ReminderServiceIT {
     void findAllRemindersWithFilter_TestIT() {
         List<ReminderReadDTO> reminderReadDTOS = reminderService.findAllReminders(principal, new ReminderFilter("тест2", null, null, null));
         assertEquals(reminderReadDTOS,
-                List.of(new ReminderReadDTO(2L, "тест2", "тест2",  LocalDateTime.of(2024, 10, 17, 10, 0, 0, 0),
-                new UserReadDTO(1L, "morozow.cult@@gmail.com"))));
+                List.of(new ReminderReadDTO(2L, "тест2", "тест2", LocalDateTime.of(2024, 10, 17, 10, 0, 0, 0),
+                        new UserReadDTO(1L, "morozow.cult@@gmail.com"))));
     }
 
     @Test
     void findAllRemindersWithPagination_TestIT() {
-        RemindersRs remindersRs = reminderService.findAllReminders(principal, 1,1);
+        RemindersRs remindersRs = reminderService.findAllReminders(principal, 1, 1);
         assertEquals(remindersRs,
-                new RemindersRs(List.of(new ReminderReadDTO(2L, "тест2", "тест2",  LocalDateTime.of(2024, 10, 17, 10, 0, 0, 0),
-                new UserReadDTO(1L, "morozow.cult@@gmail.com"))), false));
+                new RemindersRs(List.of(new ReminderReadDTO(2L, "тест2", "тест2", LocalDateTime.of(2024, 10, 17, 10, 0, 0, 0),
+                        new UserReadDTO(1L, "morozow.cult@@gmail.com"))), false));
     }
 
     @Test
     void create_TestIT() {
-        ReminderCreateEditDTO reminderCreateEditDTO = new ReminderCreateEditDTO("тест2", "тест2",  LocalDateTime.of(2024, 10, 17, 10, 0, 0, 0));
+        ReminderCreateEditDTO reminderCreateEditDTO = new ReminderCreateEditDTO("тест2", "тест2", LocalDateTime.of(2024, 10, 17, 10, 0, 0, 0));
         ReminderReadDTO reminderReadDTO = reminderService.create(principal, reminderCreateEditDTO);
         assertEquals(reminderReadDTO.getTitle(), reminderCreateEditDTO.getTitle());
         assertEquals(reminderReadDTO.getDescription(), reminderCreateEditDTO.getDescription());
